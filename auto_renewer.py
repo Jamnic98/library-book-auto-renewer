@@ -5,18 +5,19 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
 class AutoRenewer:
     def __init__(self):
-        self.driver = selenium.webdriver.Chrome('C:\\Users\\jamie\\chromedriver.exe')
-        self.driver.get("https://libraries.havering.gov.uk/client/en_GB/havering/")
+        self.driver = selenium.webdriver.Chrome(os.getenv('CHROME_DRIVER_LOCATION'))
+        self.driver.get(os.getenv('LIBRARY_URL'))
 
     def run(self):
         self.log_in()
         self.navigate_to_holds()
-        self.renew_library_holds()
+        self.renew_books(self.get_books_due())
         self.log_out()
 
     def log_in(self):
@@ -37,29 +38,35 @@ class AutoRenewer:
             ec.presence_of_element_located((By.XPATH, '/html/body/div[6]/div[1]/div[4]/div/ul/li[2]/a'))
         ).click()
 
-    def renew_library_holds(self):
+    def get_books_due(self):
+        books_due = []
         table_rows = self.driver.find_elements_by_xpath(
             '/html/body/div[6]/div[1]/div[4]/div/div[2]/div/div[1]/div[2]/div/div/div['
             '1]/div/div[2]/form/div[2]/table/tbody/tr'
         )
+        for book_row in table_rows:
+            due_date = parse_date(book_row.find_element_by_class_name('checkoutsDueDate').text)
+            if is_due(due_date):
+                books_due.append(book_row)
+        return books_due
 
-        if len(table_rows):
-            books_due = 0
-            for row in table_rows:
-                due_date = parse_date(row.find_element_by_class_name('checkoutsDueDate').text)
-                if is_due(due_date):
-                    books_due += 1
-                    row \
-                        .find_element_by_class_name('checkoutsCoverArt') \
-                        .find_element_by_class_name('checkoutsCheckbox') \
-                        .click()
+    def renew_books(self, books_due):
+        if len(books_due):
+            for book_row in books_due:
+                # check the selection box
+                book_row \
+                    .find_element_by_class_name('checkoutsCoverArt') \
+                    .find_element_by_class_name('checkoutsCheckbox') \
+                    .click()
 
-            if books_due > 0:
-                self.driver.find_element_by_xpath('/html/body/div[6]/div[1]/div[4]/div/div[2]/div/div[1]/div['
-                                                  '2]/div/div/div[1]/div/div[2]/form/div[2]/div[2]/input').click()
-                WebDriverWait(self.driver, 10).until(
-                    ec.presence_of_element_located((By.XPATH, '/html/body/div[8]/div[2]/div[2]/input[1]'))
-                ).click()
+            # click the submit button
+            self.driver.find_element_by_xpath('/html/body/div[6]/div[1]/div[4]/div/div[2]/div/div[1]/div['
+                                              '2]/div/div/div[1]/div/div[2]/form/div[2]/div[2]/input').click()
+
+            # click the confirmation button
+            WebDriverWait(self.driver, 10).until(
+                ec.presence_of_element_located((By.XPATH, '/html/body/div[8]/div[2]/div[2]/input[1]'))
+            ).click()
 
 
 def parse_date(due_date_string):
