@@ -1,3 +1,4 @@
 .env
-tests/
 .idea/
+__pycache__/
+tests/geckodriver.log
