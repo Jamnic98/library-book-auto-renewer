@@ -9,3 +9,7 @@ def parse_date(due_date_string):
 
 def is_due(due_date):
     return (due_date - date.today()).days == 0
+
+
+def format_author(author):
+    return ' '.join(reversed(author.split(', ')))
