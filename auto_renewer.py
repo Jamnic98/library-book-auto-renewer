@@ -9,9 +9,14 @@ from helper_functions import is_due, parse_date, format_author
 from emailer import Emailer
 # from mime_email import MimeEmail
 from library_book import LibraryBook
-from dotenv import Dotenv
-dotenv = Dotenv(path.join(path.dirname(__file__), ".env")) # Of course, replace by your correct path
-environ.update(dotenv)
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    from dotenv import Dotenv
+    dotenv = Dotenv(path.join(path.dirname(__file__), ".env"))
+    environ.update(dotenv)
 
 RECEIVER = getenv('RECEIVER_ADDRESS')
 
