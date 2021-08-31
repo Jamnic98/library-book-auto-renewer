@@ -13,3 +13,12 @@ def is_due(due_date):
 
 def format_author(author):
     return ' '.join(reversed(author.split(', ')))
+
+
+def get_books_due(books):
+    books_due = []
+    for book in books:
+        due_date = parse_date(book.due_date)
+        if is_due(due_date):
+            books_due.append(book)
+    return books_due

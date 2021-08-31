@@ -1,11 +1,11 @@
-from os import getenv, path, environ
+from os import getenv
 import selenium.webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementNotInteractableException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from helper_functions import is_due, parse_date, format_author
+from helper_functions import format_author, get_books_due
 from emailer import Emailer
 # from mime_email import MimeEmail
 from library_book import LibraryBook
@@ -29,7 +29,7 @@ class AutoRenewer:
             self.navigate_to_holds()
             table_rows = self.get_table_rows()
             all_books = self.books_from_table_rows(table_rows)
-            books_due = self.get_books_due(all_books)
+            books_due = get_books_due(all_books)
             self.renew_books(books_due)
             self.log_out()
         finally:
@@ -109,14 +109,6 @@ class AutoRenewer:
             # send error message via email
             self.emailer.send_email(RECEIVER, f'Error getting book info from table rows. {e}')
         return books
-
-    def get_books_due(self, books):
-        books_due = []
-        for book in books:
-            due_date = parse_date(book.due_date)
-            if is_due(due_date):
-                books_due.append(book)
-        return books_due
 
     def renew_books(self, books_due):
         try:
