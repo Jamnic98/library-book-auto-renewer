@@ -1,3 +1,4 @@
+from datetime import date
 from os import getenv
 import selenium.webdriver
 from selenium.webdriver.chrome.options import Options
@@ -7,7 +8,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from helper_functions import format_author, get_books_due
 from emailer import Emailer
-# from mime_email import MimeEmail
+from mime_email import MimeEmail, generate_html_message
 from library_book import LibraryBook
 from dotenv import load_dotenv
 load_dotenv()
@@ -133,10 +134,12 @@ class AutoRenewer:
             self.emailer.send_email(RECEIVER, f'Error renewing books. {e}')
 
     def send_confirmation_email(self, renewed_books):
-        # TODO: create detailed HTML message (as a list or table)
-        #  confirming which books were renewed with their due dates
-        # send email confirming renewal
-        self.emailer.send_email(RECEIVER, f'{len(renewed_books)} books renewed.')
+        email = MimeEmail('Books Renewed', RECEIVER, self.emailer.sender_email, date.today())
+        email.add_html_message(
+            generate_html_message(message=f'{len(renewed_books)} books renewed.', books=renewed_books)
+        )
+        # send the email
+        self.emailer.send_email(RECEIVER, email.message.as_string())
 
 
 def main():
