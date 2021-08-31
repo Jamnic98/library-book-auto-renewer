@@ -2,3 +2,10 @@
 .idea/
 __pycache__/
 tests/geckodriver.log
+pyvenv.cfg
+bin/
+include/
+lib/
+share/
+
+run.sh

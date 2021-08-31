@@ -1,5 +1,6 @@
-from os import getenv
+from os import getenv, path, environ
 import selenium.webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementNotInteractableException
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,15 +9,19 @@ from helper_functions import is_due, parse_date, format_author
 from emailer import Emailer
 # from mime_email import MimeEmail
 from library_book import LibraryBook
-from dotenv import load_dotenv
-load_dotenv()
+from dotenv import Dotenv
+dotenv = Dotenv(path.join(path.dirname(__file__), ".env")) # Of course, replace by your correct path
+environ.update(dotenv)
 
 RECEIVER = getenv('RECEIVER_ADDRESS')
 
 
 class AutoRenewer:
     def __init__(self):
-        self.driver = selenium.webdriver.Chrome(getenv('CHROME_DRIVER_LOCATION'))
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--disable-dev-shm-usage')
+        self.driver = selenium.webdriver.Chrome(getenv('CHROME_DRIVER_LOCATION'), options=chrome_options)
         self.emailer = Emailer('smtp.gmail.com')
 
     def run(self):
@@ -122,8 +127,9 @@ class AutoRenewer:
                     book.check_box.click()
 
                 # click the submit button
-                self.driver.find_element_by_xpath('/html/body/div[6]/div[1]/div[4]/div/div[2]/div/div[1]/div['
-                                                  '2]/div/div/div[1]/div/div[2]/form/div[2]/div[2]/input').click()
+                self.driver.find_element_by_xpath(
+                  '/html/body/div[6]/div[1]/div[4]/div/div[2]/div/div[1]/div['
+                  '2]/div/div/div[1]/div/div[2]/form/div[2]/div[2]/input').click()
                 # click the confirmation button
                 WebDriverWait(self.driver, 5).until(
                     ec.presence_of_element_located((By.XPATH, '/html/body/div[8]/div[2]/div[2]/input[1]'))

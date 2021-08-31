@@ -5,5 +5,3 @@ class LibraryBook:
         self.due_date = due_date
         self.times_renewed = times_renewed
         self.check_box = check_box
-
-
