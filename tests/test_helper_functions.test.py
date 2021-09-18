@@ -3,7 +3,6 @@ from datetime import date
 from helper_functions import is_due, parse_date, format_author
 
 
-
 class TestHelperFunctions(unittest.TestCase):
 
     def test_is_due(self):
@@ -13,7 +12,8 @@ class TestHelperFunctions(unittest.TestCase):
 
     def test_parse_date(self):
         self.assertEqual(parse_date('01/01/2021'), date(2021, 1, 1))
-        self.assertEqual(parse_date('31/01/1998'), date(1998, 1, 31))
+        self.assertEqual(parse_date('31/01/98'), date(1998, 1, 31))
+        self.assertEqual(parse_date('18/09/2021 23:59'), date(2021, 9, 18))
 
     def test_format_author(self):
         self.assertEqual(format_author('Hart, Kevin'), 'Kevin Hart')

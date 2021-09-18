@@ -88,7 +88,9 @@ class AutoRenewer:
     def get_table_rows(self):
         table_rows = []
         try:
-            self.driver.find_element_by_xpath('//*[@id="myCheckouts_checkoutslistnonmobile_table"]/tbody/tr')
+            table_rows = self.driver.find_elements_by_xpath(
+                '//*[@id="myCheckouts_checkoutslistnonmobile_table"]/tbody/tr'
+            )
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
             # send error message via email
             self.emailer.send_email(RECEIVER, f'Error getting table rows. {e}')

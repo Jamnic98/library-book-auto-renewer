@@ -1,10 +1,14 @@
-from datetime import date
+from datetime import datetime, date
 
 
 def parse_date(due_date_string):
-    full_due_date = due_date_string.split('/')
-    due_date = date(int(full_due_date[2]), int(full_due_date[1]), int(full_due_date[0]))
-    return due_date
+    s = due_date_string.strip().split(' ')[0]
+    try:
+        datetime_object = datetime.strptime(s, '%d/%m/%Y')
+    except ValueError:
+        datetime_object = datetime.strptime(s, '%d/%m/%y')
+
+    return datetime_object.date()
 
 
 def is_due(due_date):
