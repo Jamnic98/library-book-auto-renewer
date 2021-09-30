@@ -3,7 +3,8 @@ from os import getenv
 import selenium.webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementNotInteractableException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementNotInteractableException, \
+    SessionNotCreatedException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from helper_functions import format_author, get_books_due
@@ -18,11 +19,14 @@ RECEIVER = getenv('RECEIVER_ADDRESS')
 
 class AutoRenewer:
     def __init__(self):
-        chrome_options = Options()
-        chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        self.driver = selenium.webdriver.Chrome(getenv('CHROME_DRIVER_LOCATION'), options=chrome_options)
         self.emailer = Emailer('smtp.gmail.com')
+        try:
+            chrome_options = Options()
+            chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-dev-shm-usage')
+            self.driver = selenium.webdriver.Chrome(getenv('CHROME_DRIVER_LOCATION'), options=chrome_options)
+        except SessionNotCreatedException as e:
+            self.emailer.send_email(RECEIVER, e.msg)
 
     def run(self):
         try:
