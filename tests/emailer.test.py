@@ -3,7 +3,7 @@ from datetime import date
 from library_book import LibraryBook
 from mime_email import MimeEmail, generate_html_message
 
-books = [LibraryBook('title', 'author', '1/31/1998', '5', None)]
+books = [LibraryBook('title', 'author', '31/1/1998', '5', None)]
 
 email = MimeEmail('Test', 'test@test.com', 'test0@test.com', '31/08/2021')
 email.add_html_message(generate_html_message('some text', books))

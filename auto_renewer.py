@@ -7,7 +7,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException,
     SessionNotCreatedException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from helper_functions import format_author, get_books_due
+from helper_functions import format_author, get_books_due, get_next_due_date, parse_date
 from emailer import Emailer
 from mime_email import MimeEmail, generate_html_message
 from library_book import LibraryBook
@@ -32,10 +32,15 @@ class AutoRenewer:
         try:
             self.log_in()
             self.navigate_to_holds()
-            table_rows = self.get_table_rows()
-            all_books = self.books_from_table_rows(table_rows)
+            all_books = self.books_from_table_rows(self.get_table_rows())
             books_due = get_books_due(all_books)
             self.renew_books(books_due)
+            all_books = self.books_from_table_rows(self.get_table_rows())
+            next_due_date = get_next_due_date(all_books)
+            self.send_confirmation_email(
+                renewed_books=books_due,
+                additional_msg=f'Next due date: {next_due_date.strftime("%d/%m/%Y")}'
+            )
             self.log_out()
         finally:
             self.driver.close()
@@ -110,7 +115,7 @@ class AutoRenewer:
                 times_renewed = row.find_element_by_class_name('checkoutsRenewCount').text
                 check_box = row.find_element_by_class_name('checkoutsCoverArt') \
                     .find_element_by_class_name('checkoutsCheckbox')
-                book = LibraryBook(title, format_author(author), due_date, times_renewed, check_box)
+                book = LibraryBook(title, format_author(author), parse_date(due_date), times_renewed, check_box)
                 books.append(book)
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
             # send error message via email
@@ -133,16 +138,14 @@ class AutoRenewer:
                     ec.presence_of_element_located((By.XPATH, '/html/body/div[8]/div[2]/div[2]/input[1]'))
                 ).click()
 
-                self.send_confirmation_email(renewed_books=books_due)
-
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
             # send error message via email
             self.emailer.send_email(RECEIVER, f'Error renewing books. {e}')
 
-    def send_confirmation_email(self, renewed_books):
+    def send_confirmation_email(self, renewed_books, additional_msg):
         email = MimeEmail('Books Renewed', RECEIVER, self.emailer.sender_email, date.today())
         email.add_html_message(
-            generate_html_message(message=f'{len(renewed_books)} books renewed.', books=renewed_books)
+            generate_html_message(message=f'{len(renewed_books)} books renewed. {additional_msg}', books=renewed_books)
         )
         # send the email
         self.emailer.send_email(RECEIVER, email.message.as_string())

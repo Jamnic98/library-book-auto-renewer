@@ -1,6 +1,7 @@
 import unittest
 from datetime import date
-from helper_functions import is_due, parse_date, format_author
+from helper_functions import is_due, parse_date, format_author, get_next_due_date
+from library_book import LibraryBook
 
 
 class TestHelperFunctions(unittest.TestCase):
@@ -18,6 +19,14 @@ class TestHelperFunctions(unittest.TestCase):
     def test_format_author(self):
         self.assertEqual(format_author('Hart, Kevin'), 'Kevin Hart')
         self.assertEqual(format_author('Covey, Stephen R.'), 'Stephen R. Covey')
+
+    def test_get_next_due_date(self):
+        books = [
+          LibraryBook('book1', 'author1', date(1998, 1, 31), 1, None),
+          LibraryBook('book2', 'author2', date(2002, 6, 3), 1, None),
+          LibraryBook('book2', 'author2', date(2012, 1, 1), 1, None),
+        ]
+        self.assertEqual(get_next_due_date(books), date(1998, 1, 31))
 
 
 if __name__ == '__main__':

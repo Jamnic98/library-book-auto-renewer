@@ -22,7 +22,10 @@ def format_author(author):
 def get_books_due(books):
     books_due = []
     for book in books:
-        due_date = parse_date(book.due_date)
-        if is_due(due_date):
+        if is_due(book.due_date):
             books_due.append(book)
     return books_due
+
+
+def get_next_due_date(books):
+    return min([book.due_date for book in books])
