@@ -4,7 +4,7 @@ from datetime import date
 
 
 class MimeEmail:
-    def __init__(self, subject, receiver, sender, send_date=date.today()):
+    def __init__(self, subject, sender, send_date=date.today()):
         self.message = MIMEMultipart()
         self.message['Subject'] = subject
         self.message['To'] = receiver

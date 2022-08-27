@@ -11,4 +11,5 @@ build/
 dist/
 auto_renewer.spec
 
-run.sh
+credentials.json
+token.json

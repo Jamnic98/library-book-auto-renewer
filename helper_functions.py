@@ -1,31 +1,26 @@
-from datetime import datetime, date
+from datetime import date
+
+from emailer import send_email
+from library_book import LibraryBook, format_due_date
 
 
-def parse_date(due_date_string):
-    s = due_date_string.strip().split(' ')[0]
-    try:
-        datetime_object = datetime.strptime(s, '%d/%m/%Y')
-    except ValueError:
-        datetime_object = datetime.strptime(s, '%d/%m/%y')
-
-    return datetime_object.date()
-
-
-def is_due(due_date):
-    return (due_date - date.today()).days == 0
-
-
-def format_author(author):
-    return ' '.join(reversed(author.split(', ')))
-
-
-def get_books_due(books):
+def get_books_due(books: list[LibraryBook]) -> list[LibraryBook]:
     books_due = []
     for book in books:
-        if is_due(book.due_date):
+        if book.is_due():
             books_due.append(book)
     return books_due
 
 
-def get_next_due_date(books):
-    return min([book.due_date for book in books])
+def get_next_due_date(books: list[LibraryBook]) -> date:
+    due_dates = [book.due_date for book in books]
+    return min(due_date for due_date in due_dates if due_date > date.today())
+
+
+def send_confirmation_email(renewed_books: list[LibraryBook], books_due=None) -> None:
+    confirmation_msg = f'Books renewed: {", ".join(book.title for book in renewed_books)}\n' \
+                       f'Next due date: {format_due_date(get_next_due_date(renewed_books))}'
+    if books_due is not None:
+        confirmation_msg += f'Failed to renew: {", ".join(book.title for book in renewed_books)}\n'
+
+    send_email(confirmation_msg)
