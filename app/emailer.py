@@ -40,7 +40,7 @@ def send_email(message):
         email.set_content(message)
         email['To'] = getenv('RECEIVER_EMAIL')
         email['From'] = getenv('SENDER_EMAIL')
-        email['Subject'] = 'Automated draft'
+        email['Subject'] = 'Auto Renewer'
 
         # encode and send email
         encoded_message = base64.urlsafe_b64encode(email.as_bytes()).decode()
@@ -48,7 +48,6 @@ def send_email(message):
             'raw': encoded_message
         }
         send_message = service.users().messages().send(userId="me", body=create_message).execute()
-        print(F'Message Id: {send_message["id"]}')
     except HttpError as error:
         print(F'An error occurred: {error}')
         send_message = None

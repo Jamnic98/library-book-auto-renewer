@@ -13,9 +13,9 @@ load_dotenv()
 
 
 class AutoRenewer:
-    def __init__(self):
+    def __init__(self, browser_name):
         try:
-            self.driver = WebDriver()
+            self.driver = WebDriver(browser_name)
             self.driver.get(getenv('LIBRARY_URL'))
             self.driver.implicitly_wait(10)
         except SessionNotCreatedException:
@@ -32,7 +32,7 @@ class AutoRenewer:
             self.driver.find_element(By.ID, 'j_password').send_keys(getenv('LIBRARY_PASSWORD'))
             self.driver.find_element(By.ID, 'submit_0').click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Log in failed. {e}')
+            send_email(f'Log-in failed. {e}')
             exit(1)
 
     def log_out(self) -> None:
@@ -40,7 +40,7 @@ class AutoRenewer:
             self.driver.wait.until(ec.element_to_be_clickable((By.LINK_TEXT, 'Log Out'))).click()
             self.driver.wait.until(ec.element_to_be_clickable((By.ID, 'okButton'))).click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Log out failed. {e}')
+            send_email(f'Log-out failed. {e}')
             exit(1)
 
     def navigate_to_holds(self) -> None:
@@ -59,8 +59,8 @@ class AutoRenewer:
     def books_from_table_rows(self) -> list[LibraryBook]:
         books = []
         try:
-            table_rows = self.driver.find_elements(By.XPATH,
-                '//*[@id="myCheckouts_checkoutslistnonmobile_table"]/tbody/tr'
+            table_rows = self.driver.find_elements(
+                By.XPATH, '//*[@id="myCheckouts_checkoutslistnonmobile_table"]/tbody/tr'
             )
             for row in table_rows:
                 title = row.find_element(By.CLASS_NAME, 'hideIE').text
@@ -73,7 +73,7 @@ class AutoRenewer:
                 book = LibraryBook(title, author, due_date, times_renewed, check_box)
                 books.append(book)
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Error getting books from table rows. {e}')
+            send_email(f'Failed to get books from table rows. {e}')
             exit(1)
         return books
 
@@ -90,7 +90,7 @@ class AutoRenewer:
                 ec.element_to_be_clickable((By.ID, 'myCheckouts_checkoutslistnonmobile_checkoutsDialogConfirm'))
             ).click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Error renewing books. {e}')
+            send_email(f'Failed to renew books. {e}')
             exit(1)
 
     def run(self) -> None:
