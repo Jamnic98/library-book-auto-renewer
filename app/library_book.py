@@ -7,11 +7,12 @@ def format_author(author_str: str) -> str:
     return ' '.join(reversed(author_names))
 
 
-def format_due_date(due_date):
+def format_due_date(due_date: date) -> str:
     return due_date.strftime('%d/%m/%y')
 
 
-def parse_date(due_date_string: str):
+def parse_date(due_date_string: str) -> date:
+    """convert due date string into date type"""
     formatted_string = due_date_string.strip().split(' ')[0]
     try:
         datetime_object = datetime.strptime(formatted_string, '%d/%m/%Y')

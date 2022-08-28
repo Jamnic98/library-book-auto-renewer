@@ -1,30 +1,18 @@
-from auto_renewer import AutoRenewer
-import unittest
-from dotenv import load_dotenv
-load_dotenv()
+from app.auto_renewer import AutoRenewer
+from selenium.webdriver.common.by import By
 
 
-class TestAutoRenewer(unittest.TestCase):
+def test_loads_page():
+    auto_renewer = AutoRenewer()
+    auto_renewer.log_in()
 
-    auto_renewer = None
+    assert 'Library Links' in auto_renewer.driver.title
+    welcome_text = auto_renewer.driver.find_element(
+        By.XPATH,
+        '/html/body/div[2]/div/div/div[1]/div/div[1]/span'
+    ).text
+    assert 'Welcome' in welcome_text
 
-    @classmethod
-    def setUpClass(cls):
-        cls.auto_renewer = AutoRenewer()
-        cls.auto_renewer.log_in()
-
-    def test_loads_page(self):
-        self.assertIn("Library Links", self.auto_renewer.driver.title)
-        welcome_text = self.auto_renewer.driver.find_element_by_xpath(
-            '/html/body/div[3]/div/div/div[1]/div/div[1]/span').text
-        self.assertIn('Welcome', welcome_text)
-
-    @ classmethod
-    def tearDownClass(cls):
-        cls.auto_renewer.log_out()
-        cls.auto_renewer.driver.close()
-        del cls.auto_renewer
-
-
-if __name__ == "__main__":
-    unittest.main()
+    auto_renewer.log_out()
+    auto_renewer.driver.close()
+    del auto_renewer

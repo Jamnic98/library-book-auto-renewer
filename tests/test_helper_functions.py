@@ -1,7 +1,7 @@
 import unittest
 from datetime import date
-from helper_functions import get_next_due_date, get_books_due
-from library_book import LibraryBook
+from app.helper_functions import get_next_due_date, get_books_due
+from app.library_book import LibraryBook
 
 books = [
     LibraryBook('book_1', 'author_1', '31/1/1998', '1', None),
@@ -11,15 +11,11 @@ books = [
 ]
 
 
-class TestHelperFunctions(unittest.TestCase):
+class TestHelperFunctions:
     def test_get_books_due(self):
         books_due = get_books_due(books)
-        self.assertIn(books[0], books_due)
-        self.assertIn(books[1], books_due)
+        assert books[0] in books_due
+        assert books[1] in books_due
 
     def test_get_next_due_date(self):
-        self.assertEqual(get_next_due_date(books), date(3000, 1, 1))
-
-
-if __name__ == '__main__':
-    unittest.main()
+        assert get_next_due_date(books) == date(3000, 1, 1)

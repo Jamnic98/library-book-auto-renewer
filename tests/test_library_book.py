@@ -1,7 +1,6 @@
 import unittest
 from datetime import date
-from helper_functions import get_next_due_date
-from library_book import LibraryBook, format_author, parse_date
+from app.library_book import LibraryBook, format_author, parse_date
 
 books = [
     LibraryBook('book_1', 'author_1', '31/1/1998', '1', None),
@@ -10,27 +9,19 @@ books = [
 ]
 
 
-class TestLibraryBook(unittest.TestCase):
-
+class TestLibraryBook:
     def test_parse_date(self):
-        self.assertEqual(parse_date('01/01/2021'), date(2021, 1, 1))
-        self.assertEqual(parse_date('31/01/98'), date(1998, 1, 31))
-        self.assertEqual(parse_date('18/09/2021 23:59'), date(2021, 9, 18))
+        assert parse_date('01/01/2021') == date(2021, 1, 1)
+        assert parse_date('31/01/98') == date(1998, 1, 31)
+        assert parse_date('18/09/2021 23:59') == date(2021, 9, 18)
 
     def test_format_author(self):
-        self.assertEqual(format_author('Hart, Kevin'), 'Kevin Hart')
-        self.assertEqual(format_author('Covey, Stephen R.'), 'Stephen R. Covey')
-        self.assertEqual(format_author('Roberts, Alice, 1973-'), 'Alice Roberts')
-        self.assertEqual(
-            format_author('Huffington, Arianna Stassinopoulos, 1950-'),
-            'Arianna Stassinopoulos Huffington'
-        )
+        assert format_author('Hart, Kevin') == 'Kevin Hart'
+        assert format_author('Covey, Stephen R.') == 'Stephen R. Covey'
+        assert format_author('Roberts, Alice, 1973-') == 'Alice Roberts'
+        assert format_author('Huffington, Arianna Stassinopoulos, 1950-') == 'Arianna Stassinopoulos Huffington'
 
     def test_is_due(self):
-        self.assertEqual(books[0].is_due(), True)
-        self.assertEqual(books[1].is_due(), True)
-        self.assertEqual(books[2].is_due(), False)
-
-
-if __name__ == '__main__':
-    unittest.main()
+        assert books[0].is_due() is True
+        assert books[1].is_due() is True
+        assert books[2].is_due() is False
