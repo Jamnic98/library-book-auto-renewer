@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, \
     ElementNotInteractableException, SessionNotCreatedException
 
-from app.helper_functions import get_books_due, send_confirmation_email
+from utlis.helper_functions import get_books_due, send_confirmation_email
 from app.library_book import LibraryBook
 from app.emailer import send_email
 from app.web_driver import WebDriver
@@ -32,7 +32,7 @@ class AutoRenewer:
             self.driver.find_element(By.ID, 'j_password').send_keys(getenv('LIBRARY_PASSWORD'))
             self.driver.find_element(By.ID, 'submit_0').click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Log-in failed. {e}')
+            send_email(F'Log-in failed. {e}')
             exit(1)
 
     def log_out(self) -> None:
@@ -40,7 +40,7 @@ class AutoRenewer:
             self.driver.wait.until(ec.element_to_be_clickable((By.LINK_TEXT, 'Log Out'))).click()
             self.driver.wait.until(ec.element_to_be_clickable((By.ID, 'okButton'))).click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Log-out failed. {e}')
+            send_email(F'Log-out failed. {e}')
             exit(1)
 
     def navigate_to_holds(self) -> None:
@@ -53,7 +53,7 @@ class AutoRenewer:
             # click 'Loans / Renewals' tab
             self.driver.wait.until(ec.element_to_be_clickable((By.ID, 'ui-id-16'))).click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Failed to navigate to holds. {e}')
+            send_email(F'Failed to navigate to holds. {e}')
             exit(1)
 
     def books_from_table_rows(self) -> list[LibraryBook]:
@@ -73,7 +73,7 @@ class AutoRenewer:
                 book = LibraryBook(title, author, due_date, times_renewed, check_box)
                 books.append(book)
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Failed to get books from table rows. {e}')
+            send_email(F'Failed to get books from table rows. {e}')
             exit(1)
         return books
 
@@ -90,7 +90,7 @@ class AutoRenewer:
                 ec.element_to_be_clickable((By.ID, 'myCheckouts_checkoutslistnonmobile_checkoutsDialogConfirm'))
             ).click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(f'Failed to renew books. {e}')
+            send_email(F'Failed to renew books. {e}')
             exit(1)
 
     def run(self) -> None:

@@ -1,5 +1,4 @@
 from datetime import date
-
 from app.emailer import send_email
 from app.library_book import LibraryBook, format_due_date
 
@@ -18,9 +17,9 @@ def get_next_due_date(books: list[LibraryBook]) -> date:
 
 
 def send_confirmation_email(renewed_books: list[LibraryBook], books_due=None) -> None:
-    confirmation_msg = f'Books renewed: {", ".join(book.title for book in renewed_books)}\n' \
-                       f'Next due date: {format_due_date(get_next_due_date(renewed_books))}\n'
+    confirmation_msg = F'Books renewed: {", ".join(book.title for book in renewed_books)}\n' \
+                       F'Next due date: {format_due_date(get_next_due_date(renewed_books))}\n'
     if books_due is not None:
-        confirmation_msg += f'\nFailed to renew: {", ".join(book.title for book in renewed_books)}\n'
+        confirmation_msg += F'\nFailed to renew: {", ".join(book.title for book in renewed_books)}\n'
 
     send_email(confirmation_msg)
