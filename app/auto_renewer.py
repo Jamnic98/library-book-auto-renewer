@@ -1,9 +1,9 @@
+from app.logger import Logger
 from os import getenv
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, \
     ElementNotInteractableException, SessionNotCreatedException
-
 from utlis.helper_functions import get_books_due, send_confirmation_email
 from app.library_book import LibraryBook
 from app.emailer import send_email
@@ -15,11 +15,14 @@ load_dotenv()
 class AutoRenewer:
     def __init__(self, browser_name):
         try:
+            self.logger = Logger()
             self.driver = WebDriver(browser_name)
             self.driver.get(getenv('LIBRARY_URL'))
             self.driver.implicitly_wait(10)
         except SessionNotCreatedException:
-            send_email('Failed to create session.')
+            error_msg = 'Failed to create session.'
+            send_email(error_msg)
+            self.logger.error(error_msg)
             self.driver.close()
             exit(1)
 
@@ -32,7 +35,9 @@ class AutoRenewer:
             self.driver.find_element(By.ID, 'j_password').send_keys(getenv('LIBRARY_PASSWORD'))
             self.driver.find_element(By.ID, 'submit_0').click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(F'Log-in failed. {e}')
+            error_msg = F'Log-in failed. {e}'
+            send_email(error_msg)
+            self.logger.error(error_msg)
             exit(1)
 
     def log_out(self) -> None:
@@ -40,7 +45,9 @@ class AutoRenewer:
             self.driver.wait.until(ec.element_to_be_clickable((By.LINK_TEXT, 'Log Out'))).click()
             self.driver.wait.until(ec.element_to_be_clickable((By.ID, 'okButton'))).click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(F'Log-out failed. {e}')
+            error_msg = F'Log-out failed. {e}'
+            send_email(error_msg)
+            self.logger(error_msg)
             exit(1)
 
     def navigate_to_holds(self) -> None:
@@ -53,7 +60,9 @@ class AutoRenewer:
             # click 'Loans / Renewals' tab
             self.driver.wait.until(ec.element_to_be_clickable((By.ID, 'ui-id-16'))).click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(F'Failed to navigate to holds. {e}')
+            error_msg = F'Failed to navigate to holds. {e}'
+            send_email(error_msg)
+            self.logger(error_msg)
             exit(1)
 
     def books_from_table_rows(self) -> list[LibraryBook]:
@@ -73,7 +82,9 @@ class AutoRenewer:
                 book = LibraryBook(title, author, due_date, times_renewed, check_box)
                 books.append(book)
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(F'Failed to get books from table rows. {e}')
+            error_msg = F'Failed to get books from table rows. {e}'
+            send_email(error_msg)
+            self.logger(error_msg)
             exit(1)
         return books
 
@@ -90,7 +101,9 @@ class AutoRenewer:
                 ec.element_to_be_clickable((By.ID, 'myCheckouts_checkoutslistnonmobile_checkoutsDialogConfirm'))
             ).click()
         except (TimeoutException, NoSuchElementException, ElementNotInteractableException) as e:
-            send_email(F'Failed to renew books. {e}')
+            error_msg = F'Failed to renew books. {e}'
+            send_email(error_msg)
+            self.logger(error_msg)
             exit(1)
 
     def run(self) -> None:
@@ -110,5 +123,6 @@ class AutoRenewer:
                 else:
                     send_confirmation_email(renewed_books)
             self.log_out()
+            self.logger.info('Program ran without error.')
         finally:
             self.driver.close()

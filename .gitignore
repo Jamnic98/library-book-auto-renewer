@@ -13,3 +13,5 @@ auto_renewer.spec
 
 credentials.json
 token.json
+
+logging_info.txt

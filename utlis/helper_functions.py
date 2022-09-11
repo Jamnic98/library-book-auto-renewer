@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 from app.emailer import send_email
 from app.library_book import LibraryBook, format_due_date
@@ -23,3 +24,5 @@ def send_confirmation_email(renewed_books: list[LibraryBook], books_due=None) ->
         confirmation_msg += F'\nFailed to renew: {", ".join(book.title for book in renewed_books)}\n'
 
     send_email(confirmation_msg)
+    logger = logging.getLogger('logger')
+    logger.info(F'Email sent. {confirmation_msg}')
