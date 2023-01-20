@@ -3,6 +3,7 @@ from re import match
 
 
 def format_author(author_str: str) -> str:
+    author_str = author_str[0: author_str.rfind(',')]
     author_names = [string for string in author_str.split(', ') if match('[a-zA-Z.-]', string)]
     return ' '.join(reversed(author_names))
 
@@ -33,4 +34,7 @@ class LibraryBook:
         return (self.due_date - date.today()).days <= 0
 
     def __repr__(self):
-        return F'Title: {self.title}\n' + F'Author: {self.author}\n' + F'Due: {format_due_date(self.due_date)}\n'
+        title_str = F'Title -> {self.title}'
+        author_str = F'Author -> {self.author}'
+        due_date_str = F'Due -> {format_due_date(self.due_date)}'
+        return ' | '.join([title_str, author_str, due_date_str])

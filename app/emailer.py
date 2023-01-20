@@ -15,17 +15,17 @@ SCOPES = [
 
 def get_credentials():
     creds = None
-    if path.exists('../token.json'):
-        creds = Credentials.from_authorized_user_file('../token.json', SCOPES)
+    if path.exists(token_path := path.join('token.json')):
+        creds = Credentials.from_authorized_user_file(token_path, SCOPES)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                '../credentials.json', SCOPES)
+            creds_path = path.join('credentials.json')
+            flow = InstalledAppFlow.from_client_secrets_file(creds_path, SCOPES)
             creds = flow.run_local_server(port=8080)
         # Save the credentials for the next run
-        with open('../token.json', 'w') as token:
+        with open(token_path, 'w') as token:
             token.write(creds.to_json())
     return creds
 
@@ -48,6 +48,5 @@ def send_email(message):
         }
         send_message = service.users().messages().send(userId="me", body=create_message).execute()
     except HttpError as error:
-        print(F'An error occurred: {error}')
         send_message = None
     return send_message

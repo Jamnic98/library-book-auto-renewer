@@ -33,7 +33,7 @@ class WebDriver:
                     service=ChromiumService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()),
                     options=chrome_options
                 )
-        except ValueError:
-            driver = webdriver.Chrome(service=Service(executable_path=getenv("CHROME_DRIVER_LOCATION")))
+        except:
+          driver = webdriver.Chrome(service=Service(executable_path=getenv("CHROME_DRIVER_LOCATION")), options=chrome_options)
         driver.wait = WebDriverWait(driver, 10)
         return driver
