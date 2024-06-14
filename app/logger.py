@@ -5,9 +5,9 @@ class Logger:
     def __new__(cls):
         logger = logging.getLogger('logging')
         logging.basicConfig(
-            filename='logging_info.txt',
-            filemode='a+',
-            level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            filename='logs.txt',
+            filemode='a',
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            level = logging.INFO,
         )
         return logger
