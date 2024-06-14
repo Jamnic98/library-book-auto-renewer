@@ -13,7 +13,7 @@ load_dotenv()
 
 
 class AutoRenewer:
-    def __init__(self, browser_name='chrome'):
+    def __init__(self, browser_name):
         try:
             self.logger = Logger()
             self.driver = WebDriver(browser_name)

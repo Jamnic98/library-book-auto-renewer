@@ -8,8 +8,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.core.os_manager import ChromeType
 
 chrome_options = Options()
-# chrome_options.add_argument('--headless')
-# chrome_options.add_argument("window-size=1400,1500")
+chrome_options.add_argument('--headless')
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("start-maximized")
@@ -20,7 +19,6 @@ chrome_options.add_argument("--disable-dev-shm-usage")
 
 class WebDriver:
     def __new__(cls, browser_name: str):
-        browser_name = browser_name.lower()
         if browser_name == 'chrome':
             driver = webdriver.Chrome(
                 service=ChromeService(ChromeDriverManager().install()), options=chrome_options
@@ -33,9 +31,11 @@ class WebDriver:
                 options=chrome_options
             )
         else:
-            driver = webdriver.Chrome(
-                service=Service(executable_path=getenv("CHROME_DRIVER_LOCATION"))
-            )
+            # Specify the path to the downloaded ChromeDriver
+            chrome_driver_path = getenv('CHROME_DRIVER_LOCATION')
+            # Set up the Chrome driver with the specified path
+            service = Service(chrome_driver_path)
+            driver = webdriver.Chrome(service=service, options=chrome_options)
 
         driver.wait = WebDriverWait(driver, 5)
         return driver

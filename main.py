@@ -1,8 +1,13 @@
+import sys
 from app.auto_renewer import AutoRenewer
 
 
 def main():
-    auto_renewer = AutoRenewer()
+    browser = ''
+    if len(sys.argv) == 2:
+        browser = sys.argv[1]
+
+    auto_renewer = AutoRenewer(browser)
     auto_renewer.run()
 
 
