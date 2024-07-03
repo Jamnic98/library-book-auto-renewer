@@ -1,9 +1,10 @@
 import sys
+from enum import Enum
 from app.auto_renewer import AutoRenewer
 
 
 def main():
-    browser = ''
+    browser = None
     if len(sys.argv) == 2:
         browser = sys.argv[1]
 
