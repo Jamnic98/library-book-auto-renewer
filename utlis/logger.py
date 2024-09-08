@@ -1,5 +1,5 @@
 import logging
-from app.config import settings
+from utlis.settings import config
 
 
 class Logger:
@@ -14,7 +14,7 @@ class Logger:
         file_handler.setFormatter(formatter)
         log.addHandler(file_handler)
 
-        if settings["ENV"] != 'production':
+        if config["ENV"] != 'production':
             # Create a stream handler for console output
             console_handler = logging.StreamHandler()
             console_handler.setLevel(logging.INFO)

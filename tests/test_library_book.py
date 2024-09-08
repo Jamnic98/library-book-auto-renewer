@@ -1,4 +1,3 @@
-import unittest
 from datetime import date
 from app.library_book import LibraryBook, format_author, parse_date
 

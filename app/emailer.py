@@ -1,4 +1,4 @@
-from app.logger import logger
+from utlis.logger import logger
 
 
 # import base64
@@ -37,7 +37,7 @@ class Emailer:
         return creds
 
     def send_email(self, _message=None):
-        self.logger.info(f'Attempting to send email message')
+        self.logger.info(f'Sending email')
         # creds = self.get_credentials()
         # try:
         # service = build('gmail', 'v1', credentials=creds)
@@ -55,6 +55,6 @@ class Emailer:
         # }
         # send_message = service.users().messages().send(userId="me", body=create_message).execute()
         # except HttpError as error:
-        #     print(F'An error occurred: {error}')
+        #     print(f'An error occurred: {error}')
         #     send_message = None
         # return send_message

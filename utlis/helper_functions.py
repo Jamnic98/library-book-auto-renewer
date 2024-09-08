@@ -1,25 +1,26 @@
-from app.logger import logger
-from datetime import date
-# from app.emailer import send_email
-from app.library_book import LibraryBook, format_due_date
+from datetime import date, datetime
+from re import match
 
+from app.library_book import LibraryBook
 
 def get_books_due(books: list[LibraryBook]) -> list[LibraryBook]:
-    return [book for book in books if book.is_due()] if books else []
-
+    return [book for book in books if book.is_due()]
 
 def get_next_due_date(books: list[LibraryBook]) -> date:
-    due_dates = [book.due_date for book in books]
-    return min(due_date for due_date in due_dates if due_date > date.today())
+    return min((book.due_date for book in books if book.due_date > date.today()), default=None)
 
+def format_author(author_str: str) -> str:
+    author_names = [string for string in author_str.split(', ') if match('[a-zA-Z.-]', string)]
+    return ' '.join(reversed(author_names))
 
-# def send_confirmation_email(renewed_books: list[LibraryBook], books_due=None) -> None:
-#     confirmation_msg = f'Books renewed: {", ".join(book.title for book in renewed_books)}\n' \
-#                        f'Next due date: {format_due_date(get_next_due_date(renewed_books))}\n'
-#     if books_due is not None:
-#         confirmation_msg +=
-#         f'\nFailed to renew: {", ".join(book.title for book in renewed_books)}\n'
-#
-#     # send_email(confirmation_msg)
-#     logger = logging.getLogger('logger')
-#     logger.info(f'Email sent. {confirmation_msg}')
+def format_due_date(due_date: date) -> str:
+    return due_date.strftime('%d/%m/%y')
+
+def parse_date(due_date_string: str) -> date:
+    """convert due date string into a date"""
+    formatted_string = due_date_string.strip().split(' ')[0]
+    try:
+        datetime_object = datetime.strptime(formatted_string, '%d/%m/%Y')
+    except ValueError:
+        datetime_object = datetime.strptime(formatted_string, '%d/%m/%y')
+    return datetime_object.date()

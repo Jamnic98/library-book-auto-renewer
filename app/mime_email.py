@@ -9,7 +9,7 @@
 #         self.message['Subject'] = subject
 #         self.message['To'] = receiver
 #         self.message['From'] = sender
-#         date_string = F'{send_date.day}/{send_date.month}/{send_date.year}'
+#         date_string = f'{send_date.day}/{send_date.month}/{send_date.year}'
 #         self.message['Date'] = date_string
 #
 #     def add_plain_text_message(self, text_content):
@@ -29,11 +29,11 @@
 #
 #
 # def wrap_element(tag_name, data, style=''):
-#     return F'<{tag_name} {style}>{data}</{tag_name}>'
+#     return f'<{tag_name} {style}>{data}</{tag_name}>'
 #
 #
 # def generate_html_message(message, books):
-#     return F'<html><body>' \
-#            F'<p>{message}</p><br/>' \
-#            F'{create_list(books)}' \
-#            F'</body></html> '
+#     return f'<html><body>' \
+#            f'<p>{message}</p><br/>' \
+#            f'{create_list(books)}' \
+#            f'</body></html> '

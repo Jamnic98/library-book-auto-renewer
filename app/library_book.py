@@ -12,7 +12,7 @@ def format_due_date(due_date: date) -> str:
 
 
 def parse_date(due_date_string: str) -> date:
-    """convert due date string into date type"""
+    """convert due date string into a date"""
     formatted_string = due_date_string.strip().split(' ')[0]
     try:
         datetime_object = datetime.strptime(formatted_string, '%d/%m/%Y')
@@ -33,4 +33,4 @@ class LibraryBook:
         return (self.due_date - date.today()).days <= 0
 
     def __repr__(self):
-        return F'Title: {self.title}\n' + F'Author: {self.author}\n' + F'Due: {format_due_date(self.due_date)}\n'
+        return f'Title: {self.title}\n' + f'Author: {self.author}\n' + f'Due: {format_due_date(self.due_date)}\n'
