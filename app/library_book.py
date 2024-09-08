@@ -3,8 +3,9 @@ from re import match
 
 
 def format_author(author_str: str) -> str:
-    author_names = [string for string in author_str.split(', ') if match('[a-zA-Z.-]', string)]
-    return ' '.join(reversed(author_names))
+    author_names = [name for name in author_str.split(', ') if match(r'[a-zA-Z.-]', name)]
+    return ' '.join(reversed(author_names)).replace(',', '')
+
 
 
 def format_due_date(due_date: date) -> str:

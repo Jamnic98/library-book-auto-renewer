@@ -14,5 +14,5 @@ class WebDriver:
     def __new__(cls):
         service = ChromeService()
         driver = Chrome(service=service, options=chrome_options)
-        driver.wait = WebDriverWait(driver, 5)
+        driver.wait = WebDriverWait(driver, 10)
         return driver
