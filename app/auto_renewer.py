@@ -8,19 +8,17 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException,
 from utlis.helper_functions import get_books_due
 from app.library_book import LibraryBook
 from app.web_driver import WebDriver
-from dotenv import load_dotenv
-load_dotenv()
 
 
 class AutoRenewer:
-    def __init__(self, browser_name):
+    def __init__(self):
         try:
             # setup logging
             self.logger = logger
             # set up emailer
             self.emailer = Emailer()
             # setup driver
-            self.driver = WebDriver(browser_name)
+            self.driver = WebDriver()
             self.driver.get(getenv('LIBRARY_URL'))
             self.driver.implicitly_wait(5)
         except SessionNotCreatedException:
