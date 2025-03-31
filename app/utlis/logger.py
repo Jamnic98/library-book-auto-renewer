@@ -1,5 +1,5 @@
 import logging
-from utlis.settings import config
+from app.utlis.settings import config
 
 
 class Logger:
@@ -9,10 +9,10 @@ class Logger:
         # create a formatter
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         # Create a file handler
-        file_handler = logging.FileHandler('logs.txt')
-        file_handler.setLevel(logging.INFO)
-        file_handler.setFormatter(formatter)
-        log.addHandler(file_handler)
+        # file_handler = logging.FileHandler('logs.txt')
+        # file_handler.setLevel(logging.INFO)
+        # file_handler.setFormatter(formatter)
+        # log.addHandler(file_handler)
 
         if config["ENV"] != 'production':
             # Create a stream handler for console output

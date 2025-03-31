@@ -1,10 +1,10 @@
 from datetime import date
-from app.library_book import LibraryBook, format_author, parse_date
+from app.models.library_book import LibraryBook, format_author, parse_date
 
 books = [
-    LibraryBook('book_1', 'author_1', '31/1/1998', '1', None),
-    LibraryBook('book_2', 'author_2', date.today().strftime('%d/%m/%y'), '2', None),
-    LibraryBook('book_3', 'author_3', '1/1/3000', '3', None),
+    LibraryBook('book_1', 'author_1', '31/1/1998', '1'),
+    LibraryBook('book_2', 'author_2', date.today().strftime('%d/%m/%y'), '2'),
+    LibraryBook('book_3', 'author_3', '1/1/3000', '3'),
 ]
 
 
