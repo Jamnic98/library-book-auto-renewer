@@ -2,11 +2,12 @@ from playwright.async_api import async_playwright, expect
 
 from app.models.library_book import get_books_due, LibraryBook
 from app.utlis.logger import logger
-from app.utlis.settings import config
+
 
 
 class AutoRenewer:
-    def __init__(self):
+    def __init__(self, config: dict) -> None:
+        self.config = config
         try:
             self.page = None
             # set up emailer
@@ -18,9 +19,10 @@ class AutoRenewer:
             exit(1)
 
     async def run(self) -> None:
+        logger.info('Starting auto-renewer')
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=config['ENV'] != 'dev', slow_mo=0)
-            self.page = await browser.new_page(base_url=config['LIBRARY_URL'])
+            browser = await p.chromium.launch(headless=self.config['ENV'] != 'dev', slow_mo=0)
+            self.page = await browser.new_page(base_url=self.config['LIBRARY_URL'])
             try:
                 await self.__log_in()
                 await self.__renew_books()
