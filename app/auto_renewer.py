@@ -21,7 +21,7 @@ class AutoRenewer:
     async def run(self) -> None:
         logger.info('Starting auto-renewer')
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=(self.config['ENV'] != 'dev'), slow_mo=0)
+            browser = await p.chromium.launch(headless=self.config['ENV'] != 'dev', slow_mo=0)
             self.page = await browser.new_page(base_url=self.config['LIBRARY_URL'])
             try:
                 await self.__log_in()
@@ -81,9 +81,10 @@ class AutoRenewer:
 
     async def __books_from_table(self) -> list[LibraryBook]:
         logger.info('Collecting information on current holds')
+        await self.page.wait_for_load_state("networkidle")
         try:
             table = self.page.locator('table')
-            await expect(table).to_be_attached()
+            await expect(table).to_be_visible(timeout=10000)
 
             table_body = table.locator('tbody')
             table_rows = await table_body.locator('tr').all()
