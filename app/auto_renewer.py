@@ -7,9 +7,9 @@ from app.utlis.logger import logger
 
 class AutoRenewer:
     def __init__(self, config: dict) -> None:
-        self.config = config
         try:
             self.page = None
+            self.config = config
             # set up emailer
             # self.emailer = Emailer()
         except Exception as e:
@@ -21,7 +21,7 @@ class AutoRenewer:
     async def run(self) -> None:
         logger.info('Starting auto-renewer')
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=self.config['ENV'] != 'dev', slow_mo=0)
+            browser = await p.chromium.launch(headless=(self.config['ENV'] != 'dev'), slow_mo=0)
             self.page = await browser.new_page(base_url=self.config['LIBRARY_URL'])
             try:
                 await self.__log_in()
@@ -44,10 +44,10 @@ class AutoRenewer:
                 await decline_cookies_button.click()
             # Fill username field
             user_name_input = self.page.locator('#bNumber')
-            await user_name_input.fill(config['USER_NAME'])
+            await user_name_input.fill(self.config['USER_NAME'])
             # Fill password field
             user_password_input = self.page.locator('#pin')
-            await user_password_input.fill(config['PASSWORD'])
+            await user_password_input.fill(self.config['PASSWORD'])
             # Click login button
             await self.page.locator('button:has-text("Login")').click()
 
